@@ -18,8 +18,17 @@
 <link rel="stylesheet" type="text/css" href="css/style.css"/>
 <link rel="stylesheet" type="text/css" href="css/reset.css"/>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
+<script src='http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js' type='text/javascript'></script>
 <title>Mỹ phẩm cao cấp | Chính hãng</title>
-<script src='http://localhost:8080/webmypham/js/jquery-1.11.3.min.js' type='text/javascript'></script>
+<script>	
+	$(document).ready(function() {
+	function ativeMenuLoaiDa(var_e,var_t)
+	{
+		$('#loaida').find('.iconE').removeClass("iconEavtive");$(var_e).find('.iconE').addClass("iconEavtive");$('#loaidaval').val("Da "+var_t);
+	}
+
+	});
+</script>
 
 <script type='text/javascript'>
 $(function() {
@@ -27,68 +36,31 @@ $(function() {
 				 if ($(this).scrollTop() != 0) 
 				 {
 					$('.backtop').fadeIn();
-				 }
-				  else {
+				 } else {
 					$('.backtop').fadeOut();
 				 }
  				 });
 		$('.backtop').click(function() {
-			$('body,html').animate({scrollTop: 0}, 700);
+			$('body,html').animate({scrollTop: 0}, 800);
  		});
-
 });
 		
 </script>
-<!----------------------------------------ĐĂNG NHẬP-------------------------------------------->
-<script type="text/javascript">
-$(document).ready(function() {
-	$('a.login-window').click(function() {
-		
-		// Getting the variable's value from a link 
-		var loginBox = $(this).attr('href');
-
-		//Fade in the Popup and add close button
-		$(loginBox).fadeIn(300);
-		
-		//Set the center alignment padding + border
-		var popMargTop = ($(loginBox).height() + 24) / 2; 
-		var popMargLeft = ($(loginBox).width() + 24) / 2; 
-		
-		$(loginBox).css({ 
-			'margin-top' : -popMargTop,
-			'margin-left' : -popMargLeft
-		});
-		
-		// Add the mask to body
-		$('body').append('<div id="mask"></div>');
-		$('#mask').fadeIn(300);
-		
-		return false;
-	});
-	
-	// When clicking on the button close or the mask layer the popup closed
-	$('a.close, #mask').live('click', function() { 
-	  $('#mask , .login-popup').fadeOut(300 , function() {
-		$('#mask').remove();  
-	}); 
-	return false;
-	});
-});
-</script>
-
 </head>
 
 <body>
+
 <div id ="wrapper">
 <?php 
 	include("index/connect.php");
+
 ?>
 <div id ="header">
 
 	<div class ="topbar">
     <div class ="container">
     	<div class="logo">
-        	<a href="index.php">
+        	<a href="#">
             <?php
             	$logo_query = mysqli_query($conn,"SELECT * FROM logo_website ORDER BY  id_logo DESC limit 1");
 				while($logo_items = mysqli_fetch_array($logo_query))
@@ -96,7 +68,6 @@ $(document).ready(function() {
 					echo '<img src="images/'.$logo_items['image_logo'].'" alt="'.$logo_items['name_logo'].'" tittle="'.$logo_items['name_logo'].'"/>';
 				}
 			?>
-            
             </a>
         </div><!--end logo-->
     	<div class="search">
@@ -105,122 +76,11 @@ $(document).ready(function() {
         	<button class="searchsubmit" name="btTimkiem" type="submit" value=""> </button>
 			</form>
         </div><!-----end search---->
-        
-        <!--ĐĂNG NHẬP-->
-        
-        
-<?php
-	if(isset($_POST["btSubmit"]))
-	{
-		$username= $_POST["username"];
-		$password = md5($_POST["password"]);
-		//lam sach thong tin
-		$username = strip_tags($username);
-		$username = addslashes($username);
-		$password = strip_tags($password);
-		$password = addslashes($password);
-		if ($username == "" || $password =="")
-		{
-			echo '<div id="login-box" class="login-popup" style="display:block;left: 563px;top: 315px;">
-				
-				<a href="" class="close"><img src="close_pop.png" class="btn_close" title="Close Window" alt="Close" /></a>
-				Không được để trống!
-				</div>
-				<div id="mask" style="display:block;opacity: 0.7 !important;background: #000 !important;"></div>';
-		}
-		else
-		{
-			$sql = "select * from account where user_name = '$username' and password = '$password' ";
-			$query = mysqli_query($conn,$sql);
-			$items__ = mysqli_fetch_array($query);
-			$num_rows = mysqli_num_rows($query);
-			if ($num_rows==0) {
-				echo '<div id="login-box" class="login-popup" style="display:block;left: 495px;top: 315px;">
-						<a href="" class="close"><img src="close_pop.png" class="btn_close" title="Close Window" alt="Close" /></a>
-						Tên đăng nhập hoặc mật khẩu không đúng !
-					</div>
-				<div id="mask" style="display:block;opacity: 0.7 !important;background: #000 !important;"></div>';
-			}
-			else
-			{
-				//tiến hành lưu tên đăng nhập vào session để tiện xử lý sau này
-				$_SESSION['username'] = $username;
-                // Thực thi hành động sau khi lưu thông tin vào session
-                // ở đây mình tiến hành chuyển hướng trang web tới một trang gọi là index.php
-                header('Location: index.php');
-			}
-		}
-	}
-?>
-        <div class="login">
-        <?php
-			$sql_query =mysqli_query($conn, "select * from account where user_name=".$_SESSION['user_name']);
-			$sql_it = mysqli_fetch_array($sql_query);
-			$level = $sql_it['level'];
-        	if (isset($_SESSION['username']))
-			{
-				if($level == '1')
-				{
-					echo '<a href="admin/admin.php" style="display:block; !important;" class="xinchao">Xin chào: '.$_SESSION['username'].'
-				<div class="hv_member">
-          		<span class="exit"><a href="admin/logout.php">Đăng xuất</a></span>
-         		 </div><!--end member-->
-				</a>';
-				}
-				else
-				{
-					echo '<a href="#" style="display:block; !important;" class="xinchao">Xin chào: '.$_SESSION['username'].'
-				<div class="hv_member">
-          		<span class="exit"><a href="admin/logout.php">Đăng xuất</a></span>
-         		 </div><!--end member-->
-				</a>';
-				}
-				echo '<a href="#login-box" class="login-window" style="display:none !important;">Đăng nhập</a><a href="#" style="display:none !important;"> / Đăng ký</a>';
-			}
-			else
-			{
-				echo '<a href="admin/admin.php" style="display:none; !important;" class="xinchao">Xin chào:'.$_SESSION['username'].'</a>';
-				echo '<a href="#login-box" class="login-window" style="display:block !important;">Đăng nhập/Đăng ký</a>
-';
-
-			}
-			
-		?>
-
-        </div><!--end login-->
-        <div id="login-box" class="login-popup">
-        	<a href="" class="close"><img src="close_pop.png" class="btn_close" title="Close Window" alt="Close" /></a>
-          <form method="post" class="signin" action="index.php">
-                <fieldset class="textbox">
-            	<label class="username">
-                <span>Tài khoản</span>
-               <input type="text" name="username" id="username" value=""/>
-                </label>
-                
-                <label class="password">
-                <span>Mật khẩu</span>
-                <input type="password" name="password" id="password" value="" />
-                </label>
-                
-                <button class="submit button" type="submit" name="btSubmit">Đăng nhập</button>
-                
-                <p>
-                <a class="forgot" href="#">Quên mật khẩu?</a> <a href="admin/register.php" class="register">Đăng ký</a>
-                </p>
-                
-                
-                </fieldset>
-          </form>
-          
-		</div><!--end login-->
-        
-        <!--END ĐĂNG NHẬP-->
        	<div class="hotline">
         	<div class="ptittle">Hotline:</div><!--ptille-->
-            <div class="pdetail">0868896944 - 0944104004</div><!--pdetail-->
+            <div class="pdetail">0984 114 827 - 0973 367 087</div><!--pdetail-->
+            
         </div><!--hotline-->
-        
-        
      </div><!--end container-->
     </div><!--End topbar--->
     
@@ -260,7 +120,7 @@ $(document).ready(function() {
 					$sub_ldep_res = mysqli_query($conn,$sub_ldep_query) or die ('cannot select menu'.mysqli_error($conn));
 		
 					echo "<div class='menu_leve_1'><a href = '".$menu_items['link_menu']."' class='parent'>".$menu_items['name_menu']."</a>
-					<ul class='menuHiden' style='display: none;margin-bottom: 0px;margin-top: 0px;padding-left: 0px;padding-H:10px;'>";
+					<ul class='menuHiden' style='display: none;margin-bottom: 0px;margin-top: 0px;padding-left: 0px;padding-right:10px;'>";
 						
 						
 						if($menu_items["name_menu"] == 'Mỹ Phẩm')
@@ -279,7 +139,7 @@ $(document).ready(function() {
 									<ul style='padding-left:0px;'>";
 									while($sub_csbd_items = mysqli_fetch_array($sub_csbd_res,MYSQLI_ASSOC))
 									{
-										echo"<li><a href='san-pham/".$sub_csbd_items['link_sub']."'>". $sub_csbd_items['name_sub']." </a></li>";
+										echo"<li><a href='san-pham/". $sub_csbd_items['link_sub']."'>". $sub_csbd_items['name_sub']." </a></li>";
 									}
 							echo "
 									</ul>
@@ -351,345 +211,218 @@ $(document).ready(function() {
 					echo "</ul></div>";				
 				}
 			?>
-            <div class="cart_div">
-            <a href="san-pham/shopping-cart.php" class="cart_top">
-            	<span class="count"><?php echo $prd; ?></span><!--end count-->
+            <a href="#" class="cart_top">
+            	<span class="count">0</span><!--end count-->
     			<span class="tit">Giỏ hàng</span><!--end tit-->
-                    
     		</a>
-            <div class="quick_cart">
-    <?php //cap nhat lai gia khi nhap vao so luong
-        if(isset($_POST['update_cart']))
-        {
-            foreach($_POST['num'] as $id => $prd)//prd la gia tri nhap vao.moi id tuong ung voi so luong nhap vao
-            {
-                if(($prd == 0) and (is_numeric($prd)))//nhap vao =0 thi xoa san pham do di
-                {
-                    unset($_SESSION['cart'][$id]);
-                }
-                elseif(($prd > 0) and (is_numeric($prd)))//nhap vao so luong >0  thi tiep tuc tinh
-                {
-                    $_SESSION['cart'][$id] = $prd;
-                }
-            }
-        }
-    ?>                
-    <form method="post">
-    <div class="cart_oder">
-            <ul class="top_cart">
-                <li class="sp">SẢN PHẨM </li>
-                <li class="dg">ĐƠN GIÁ</li>
-                <li class="sl">SỐ LƯỢNG</li>
-                <li class="tt">THÀNH TIỀN</li>
-            </ul>
-            <?php
-        $sum_all = 0;
-        $sum_sp = 0;
-        if($_SESSION['cart'] != NULL)
-        {
-            foreach($_SESSION['cart'] as $id =>$prd)
-            {
-                $arr_id[] = $id;
-            }
-            $str_id = implode(',',$arr_id);
-            $item_query = "SELECT * FROM  product WHERE id_product IN ($str_id) ORDER BY id_product ASC";
-            $item_result = mysqli_query($conn,$item_query) or die ('Cannot select table!');
-            while ($rows = mysqli_fetch_array($item_result))
-            {
-    ?>
-            <ul class="bottom_cart">
-                <li class="sp">
-                    <img src="images/<?php echo $rows['image_product']; ?>" class="cartImg">
-                    <b class="Cart_title_pro"><?php echo $rows['name_product']; ?></b>
-                    <div class="delete_Cart"><a href="san-pham/delcart.php?id=<?php echo $rows['id_product']; ?>" class="del_sp">Bỏ sản phẩm</a></div>
-                    
-                </li>
-             <li class="dg"><?php echo number_format($rows['price_product']);?> VNĐ</li>
-            <li class="sl"> <input type="text" name ="num[<?php echo $rows['id_product']; ?>]" value="<?php echo $_SESSION['cart'][$rows['id_product']]; ?>" size="3" class="capnhatCartTxt"/></li>
-            <li class="tt"><?php echo number_format($rows['price_product']*$_SESSION['cart'][$rows['id_product']]); ?> VNĐ</li>
-            </ul>
-            
-    <?php			
-            }
-        }
-    ?>
-    
-    <div class="go_shopping">
-    	<input type="submit" name="update_cart" value="Cập nhật giỏ hàng" class="cap_nhat_cart"/>
-    	<a href="san-pham/shopping-cart.php" class="goa_shopping">CHUYỂN TỚI TRANG ĐẶT HÀNG</a></div>
-    </div><!--end cart_order-->
-	</form>
-                    </div><!--End Quick-->
-            </div><!--end cart_div-->
-            
             </div><!--end nav-->
             
         </div><!--end container-->
     </div><!---menu-->    
 </div><!--End Header--->
-<div class="content">
-	<div class="banner">
-    	<?php include("with-jquery.php"); ?>
-    </div><!--end banner-->
-    
-    <div class="homenew">
-    	<a href="#" tittle="Khuyến mãi" target="_blank">
-        	<img src="images/uudai.png" alt="Khuyến mãi" class="uudai"/>
-        </a>
-        <div class="figure">
-            <a href="#">BÍ QUYẾT LÀM ĐẸP</a>
-            <b></b>
-        </div><!--end figure-->
-        <div class="image_figure">
-        	<img src="images/medium-h4.jpg" atl="xóa tan quầng thâm mắt với 5 mẹo vặt cực đơn giản"/>
-        </div><!--end image_figure-->
-    </div><!--end homenew-->
-    <div class="sliderows">
-    	<div class="navicate">
-        	<h2 class="parent">
-            	<a href="#" tittle="CHĂM SÓC DA MẶT">CHĂM SÓC DA MẶT</a>
-            </h2><!--end parent-->
-            <div class="sub">
-        		<a href="san-pham/cham-soc-da-mat.php" tittle="Xem tất cả">Xem tất cả</a>
-                <i></i>
-        	</div><!--end sub-->
-            <?php
-            	$csdamat_query="SELECT * FROM submenu where type_sub=N'chăm sóc da mặt'";/* <-----------viet them code gioi han 7 san pham */
-				$csdamat_res = mysqli_query($conn,$csdamat_query) or die('Cannot select table!');
-				while ($csdamat_items = mysqli_fetch_array($csdamat_res))
-				{
-			?>
-            	<h2 class="sub">
-            <?php
-				echo"<a href='san-pham/".$csdamat_items['link_sub']."'>".$csdamat_items['name_sub']."</a>";
-				echo"</h2>";
-				}
-			?>
-        </div><!--end navicate-->
-    <a href="#" tittle="Bộ sản phẩm trị nám" target="_blank">
-        <img class="banner_rows" src="images/2a8912e92cb6c2c0ee35740f3eb0c5fa.png" alt="Bộ sản phẩm trị nám"/>
-    </a>
-    <div class="selling">
-    	<a href="#" tittle=" Bộ sản phẩm trị mụn cao cấp Sakura Nhật Bản " target="_blank">
-        	<img src="images/053b8de76e2bb58f1c691c7c6a200790.png" alt=" Bộ sản phẩm trị mụn cao cấp Sakura Nhật Bản "/>
-    	</a>
-    </div><!--end selling--->
-   		<div class="row_product owl-carousel owl-theme" style="opacity:1; display:block; ">
-    		<div class="owl-wrapper-outer">
-            	<div class="owl-wrapper" style="width: 4680px; left: 0px; display: block; transition: all 300ms ease; transform: translate3d(0px, 0px, 0px);">
-            	<?php
-				
-                	$csdamat_query="SELECT * FROM product where type_product=N'chăm sóc da mặt' limit 5";
-					$csdamat_res = mysqli_query($conn,$csdamat_query) or die('Cannot select table!');
-					while ($csdamat_items = mysqli_fetch_array($csdamat_res))
+
+	<div class="navigation">
+    	<div class="blackRum">
+        	<span class="home">
+            	<a href="index.php">Trang chủ</a>
+                 › 
+            </span><!--end home-->
+            <span class="tittleRum">
+            	<?php 
+					$mypham_query ="SELECT * FROM menu where name_menu=N'Mỹ Phẩm'";
+					$mypham_res = mysqli_query($conn,$mypham_query) or die("Cannot select table!");
+					while ($mypham_items = mysqli_fetch_array($mypham_res))
 					{
-				?>
-                <div class="owl-item" style="width: 233px;">
-                	<div class="row_product_h">
-                <?php
-					echo"
-					<a href='san-pham/page-chitiet.php?id=".$csdamat_items['id_product']."' class='images'>
-						<img alt='".$csdamat_items['name_product']."' src='images/".$csdamat_items['image_product']."'>
-					</a>
-					<h2 style='margin-top:0px;margin-bottom:0px;'>
-					<a title='".$csdamat_items['name_product']."' href='san-pham/page-chitiet.php?id=".$csdamat_items['id_product']."'>".$csdamat_items['name_product']."</a>
-					</h2>
-					<div class='price'>".number_format($csdamat_items['price_product'])." VNĐ</div><!--end price-->
-					<div class='ratings'>
-						<div class='rating-box'>
-							<div style='width:100%;' class='rating'></div><!--end rating-->
-						</div><!--end ratingbox-->
-					</div><!--end ratings-->
-					<a href='san-pham/add-cart.php?id=".$csdamat_items['id_product']."'><div class='add_cart' style='display:none;'><i></i>MUA NGAY</div></a>
-					";
-				?>
-                	</div><!--end row_product_h-->
-                </div><!--end owl-item--->
-                <?php
+						echo'
+								'.$mypham_items["name_menu"].'
+							';
 					}
 				?>
+            </span><!--tittle rum-->
+        </div><!--end blackRum-->
+    </div> <!--end navigation-->
+    <section class="content_ld">
+    	
+        <aside class="filter" id="filter_cate">
+        	<div class="filter_v">
+            	<div class="general" id="loaida">
+                <ul class="menu_left">
+                <?php
+					$menu_left_query ="select * from submenu where type_sub =N'chăm sóc da mặt'";
+					$menu_left_res =mysqli_query($conn,$menu_left_query);
+					echo "<li><a href='san-pham/cham-soc-da-mat.php' class='tittlea'>CHĂM SÓC DA MẶT</a>
+									<ul class='menu_in_left'>";
+									while($menu_left_items = mysqli_fetch_array($menu_left_res))
+									{
+										echo"<li><a href='san-pham/".$menu_left_items['link_sub']."'>".$menu_left_items['name_sub']." </a></li>";
+									}
+					echo "
+									</ul>
+						</li>";
+				?>
+                </ul>
+                </div><!--end general loaida-->
                 
-                </div><!--end owl-wrapper-->
-            </div><!--end owl-wrapper-outer-->
-    	</div><!---end row_product owl-carousel owl-theme-->
-    </div><!--end sliderows-->
-    <div class="sliderows sliderows_t sliderows_red">
-    	<div class="navicate">
-        	<h2 class="parent">
-            	<a href="#" tittle="CHĂM SÓC DA MẶT">TRANG ĐIỂM</a>
-            </h2><!--end parent-->
-            <div class="sub">
-        		<a href="#" tittle="Xem tất cả">Xem tất cả</a>
-                <i></i>
-        	</div><!--end sub-->
-            <?php
-            	$csdamat_query="SELECT * FROM submenu where type_sub=N'mặt' limit 5";/* <-----------viet them code gioi han 7 san pham */
-				$csdamat_res = mysqli_query($conn,$csdamat_query) or die('Cannot select table!');
-				while ($csdamat_items = mysqli_fetch_array($csdamat_res))
-				{
-			?>
-            	<h2 class="sub">
-            <?php
-				echo"<a href='#'>".$csdamat_items['name_sub']."</a>";
-				echo"</h2>";
-				}
-			?>
-        </div><!--end navicate-->
-        <a href="#" tittle="Bộ sản phẩm trị nám" target="_blank">
-        	<img class="banner_rows" src="images/c5b844108bdb8ca61298bab3a2e722c8.png" alt="Kem Trang Điểm  Sakura"/>
-    	</a>
-    <div class="selling">
-    	<a href="#" tittle=" Bộ sản phẩm trị mụn cao cấp Sakura Nhật Bản " target="_blank">
-        	<img src="images/006165e93760d0dc71ffe83e1894a190.png" alt=" Tạo dáng mi "/>
-    	</a>
-    </div><!--end selling--->
-    <div class="row_product owl-carousel owl-theme" style="opacity:1; display:block; ">
-    		<div class="owl-wrapper-outer">
-            	<div class="owl-wrapper" style="width: 4680px; left: 0px; display: block; transition: all 300ms ease; transform: translate3d(0px, 0px, 0px);">
-            	<?php
-				
-                	$csdamat_query="SELECT * FROM product where type_product=N'mặt' limit 5";
-					$csdamat_res = mysqli_query($conn,$csdamat_query) or die('Cannot select table!');
-					while ($csdamat_items = mysqli_fetch_array($csdamat_res))
+                <div class="clear15px"></div>
+                <div class="general" id="loaida">
+                <ul class="menu_left" >
+                <?php
+					$menu_left2_query ="select * from submenu where type_sub =N'chăm sóc body'";
+					$menu_left2_res =mysqli_query($conn,$menu_left2_query);
+					echo "<li><a href='san-pham/cham-soc-body.php' class='tittlea'>CHĂM SÓC BODY</a>
+									<ul class='menu_in_left'>";
+									while($menu_left2_items = mysqli_fetch_array($menu_left2_res))
+									{
+										echo"<li><a href='san-pham/".$menu_left2_items['link_sub']."'>".$menu_left2_items['name_sub']." </a></li>";
+									}
+					echo "
+									</ul>
+						</li>";
+				?>
+                </ul>
+                </div><!--end general loaida-->
+                
+                <div class="clear15px"></div>
+                <div class="general" id="loaida">
+                <ul class="menu_left" >
+                <?php
+					$menu_left3_query ="select * from submenu where type_sub =N'mặt'";
+					$menu_left3_res =mysqli_query($conn,$menu_left3_query);
+					echo "<li><a href='#' class='tittlea'>MẶT</a>
+									<ul class='menu_in_left'>";
+									while($menu_left3_items = mysqli_fetch_array($menu_left3_res))
+									{
+										echo"<li><a href='#'>".$menu_left3_items['name_sub']." </a></li>";
+									}
+					echo "
+									</ul>
+						</li>";
+				?>
+                </ul>
+                </div><!--end general loaida-->
+                
+                <div class="clear15px"></div>
+                 <div class="general" id="loaida">
+                <ul class="menu_left" >
+                <?php
+					$menu_left4_query ="select * from submenu where type_sub =N'mắtt'";
+					$menu_left4_res =mysqli_query($conn,$menu_left4_query);
+					echo "<li><a href='#' class='tittlea'>MẮT</a>
+									<ul class='menu_in_left'>";
+									while($menu_left4_items = mysqli_fetch_array($menu_left4_res))
+									{
+										echo"<li><a href='#'>".$menu_left4_items['name_sub']." </a></li>";
+									}
+					echo "
+									</ul>
+						</li>";
+				?>
+                </ul>
+                </div><!--end general loaida-->
+                
+                <div class="clear15px"></div>
+                <div class="general" id="loaida">
+                <ul class="menu_left" >
+                <?php
+					$menu_left5_query ="select * from submenu where type_sub =N'uống đẹp da'";
+					$menu_left5_res =mysqli_query($conn,$menu_left5_query);
+					echo "<li><a href='#' class='tittlea'>DINH DƯỠNG - SỨC KHỎE</a>
+									<ul class='menu_in_left'>";
+									while($menu_left5_items = mysqli_fetch_array($menu_left5_res))
+									{
+										echo"<li><a href='#'>".$menu_left5_items['name_sub']." </a></li>";
+									}
+					echo "
+									</ul>
+						</li>";
+				?>
+                </ul>
+                </div><!--end general loaida-->
+                
+                <div class="clear15px"></div>
+                
+                
+            </div><!--end filter_v-->
+        </aside><!--end filter -->
+        <aside class="product_l">
+        	<div class="product_boder">
+            	<?php 
+								// tong so records
+								$result =mysqli_query($conn,"select count(id_product) as total from product where parent_product=N'Mỹ Phẩm'");
+								$row = mysqli_fetch_assoc($result);
+								$total_records = $row['total'];
+								// tim limit va current 
+								$current_page = isset($_GET['page']) ? $_GET['page']:1;
+								$litmit =12;
+								$total_page =  ceil($total_records / $litmit);
+								if($current_page > $total_page )
+								{
+									$current_page = $total_page;
+								}
+								else if($current_page < 1 )
+								{
+									$current_page = 1;
+								}
+								$start = ($current_page - 1) * $litmit;
+								$result = mysqli_query($conn,"SELECT * FROM product where parent_product =N'Mỹ Phẩm' LIMIT $start, $litmit");
+								
+				?>
+                <?php
+					while ($row = mysqli_fetch_assoc($result))
 					{
-				?>
-                <div class="owl-item" style="width: 233px;">
-                	<div class="row_product_h">
-                <?php
-					echo"
-					<a href='#' class='images'>
-						<img alt='".$csdamat_items['name_product']."' src='images/".$csdamat_items['image_product']."'/>
-					</a>
-					<h2 style='margin-top:0px;margin-bottom:0px;'>
-					<a title='".$csdamat_items['name_product']."' href='#'>".$csdamat_items['name_product']."</a>
-					</h2>
-					<div class='price'>".number_format($csdamat_items['price_product'])." VNĐ</div><!--end price-->
-					<div class='ratings'>
-						<div class='rating-box'>
-							<div style='width:100%;' class='rating'></div><!--end rating-->
-						</div><!--end ratingbox-->
-					</div><!--end ratings-->
-					<div class='add_cart' onclick=''><a href='san-pham/add-cart.php?id=".$csdamat_items['id_product']."'>MUA NGAY</a></div>
-					";
-				?>
-                	</div><!--end row_product_h-->
-                </div><!--end owl-item--->
-                <?php
+						echo"<div class='product_item'>";
+						echo"
+							<a href='#' class='images'>
+							<img alt='".$row['name_product']."' src='images/".$row['image_product']."'>
+							</a>
+							<h2 style='margin-top:0px;margin-bottom:0px;'>
+							<a title='".$row['name_product']."' href='#'>".$row['name_product']."</a>
+							</h2>
+							<div class='price'>".number_format($row['price_product'])." VNĐ</div><!--end price-->
+							<div class='ratings'>
+								<div class='rating-box'>
+									<div style='width:100%;' class='rating'></div><!--end rating-->
+								</div><!--end ratingbox-->
+							</div><!--end ratings-->
+							<a href='san-pham/add-cart.php?id=".$row['id_product']."'><div class='add_cart'><i></i>MUA NGAY</div></a>
+							";
+							echo "</div><!--end product_items-->";
 					}
 				?>
-                </div><!--end owl-wrapper-->
-            </div><!--end owl-wrapper-outer-->
-    	</div><!---end row_product owl-carousel owl-theme-->
-        
-    </div><!--end slidesrow slider_row_t slider_row_red-->
-    <div class="sliderows sliderows_t sliderows_blue">
-    	<div class="navicate">
-        	<h2 class="parent">
-            	<a href="#" tittle="CHĂM SÓC BODY">CHĂM SÓC BODY</a>
-            </h2><!--end parent-->
-            <div class="sub">
-        		<a href="#" tittle="Xem tất cả">Xem tất cả</a>
-                <i></i>
-        	</div><!--end sub-->
-            <?php
-            	$csdamat_query="SELECT * FROM submenu where type_sub=N'chăm sóc body' limit 5";/* <-----------viet them code gioi han 7 san pham */
-				$csdamat_res = mysqli_query($conn,$csdamat_query) or die('Cannot select table!');
-				while ($csdamat_items = mysqli_fetch_array($csdamat_res))
-				{
-			?>
-            	<h2 class="sub">
-            <?php
-				echo"<a href='#'>".$csdamat_items['name_sub']."</a>";
-				echo"</h2>";
-				}
-			?>
-        </div><!--end navicate-->
-        <a href="#" tittle="kem dưỡng da toàn thân Sakura" target="_blank">
-        	<img class="banner_rows" src="images/da2625682ed673c1de909732888e29b7.png" alt="kem dưỡng da toàn thân Sakura"/>
-    	</a>
-    <div class="selling">
-    	<a href="#" tittle=" Tẩy tế bào chết" target="_blank">
-        	<img src="images/45c0d36678741e6f1f3e90eb991bb599.png" alt="Tẩy tế bào chết"/>
-    	</a>
-    </div><!--end selling--->
-    <div class="row_product owl-carousel owl-theme" style="opacity:1; display:block; ">
-    		<div class="owl-wrapper-outer">
-            	<div class="owl-wrapper" style="width: 4680px; left: 0px; display: block; transition: all 300ms ease; transform: translate3d(0px, 0px, 0px);">
+            </div><!--end product_boder-->
+            <div class="phan_trang">
             	<?php
-				
-                	$csdamat_query="SELECT * FROM product where type_product=N'chăm sóc body' limit 5";
-					$csdamat_res = mysqli_query($conn,$csdamat_query) or die('Cannot select table!');
-					while ($csdamat_items = mysqli_fetch_array($csdamat_res))
+                	if($current_page > 1 && $total_page > 1)
 					{
-				?>
-                <div class="owl-item" style="width: 233px;">
-                	<div class="row_product_h">
-                <?php
-					echo"
-					<a href='#' class='images'>
-						<img alt='".$csdamat_items['name_product']."' src='images/".$csdamat_items['image_product']."'>
-					</a>
-					<h2 style='margin-top:0px;margin-bottom:0px;'>
-					<a title='".$csdamat_items['name_product']."' href='#'>".$csdamat_items['name_product']."</a>
-					</h2>
-					<div class='price'>".number_format($csdamat_items['price_product'])." VNĐ</div><!--end price-->
-					<div class='ratings'>
-						<div class='rating-box'>
-							<div style='width:100%;' class='rating'></div><!--end rating-->
-						</div><!--end ratingbox-->
-					</div><!--end ratings-->
-					<div class='add_cart'><a href='san-pham/add-cart.php?id=".$csdamat_items['id_product']."'>MUA NGAY</a></div>
-					";
-				?>
-                	</div><!--end row_product_h-->
-                </div><!--end owl-item--->
-                <?php
+						echo "<a href='my-pham.php?page=".($current_page - 1)."'>
+								<b class='prev'></b>
+							</a>";
 					}
+					echo"<ul class='ul_phan_page'>";
+					for($i = 1;$i <= $total_page;$i++)
+					{
+						
+						if($i == $current_page)
+						{
+							echo "<li><span class='color_current'>".$i."</span></li>";
+						}
+						else
+						echo "<li><a href='my-pham.php?page=".$i."'>".$i."</a></li>";
+						
+					}
+					echo"</ul>";
+					if($current_page < $total_page  && $total_page > 1)
+					{
+						echo "<a href='my-pham.php?page=".($current_page + 1)."'>
+							<b class='next'></b>
+						</a>";
+					}
+					
 				?>
-                </div><!--end owl-wrapper-->
-            </div><!--end owl-wrapper-outer-->
-    	</div><!---end row_product owl-carousel owl-theme-->
-    </div><!--end sliderows slider_row_t slider_row_blue-->
-
-<!----------------------------------sliderows sliderows_t sliderows_hg------------------------------------------->    
-    
-    <div class="sliderows sliderows_t sliderows_hg">
-    	<div class="navicate">
-        	<h2 class="parent">
-            	<a href="#" tittle="DINH DƯỠNG SỨC KHỎE">DINH DƯỠNG SỨC KHỎE</a>
-            </h2><!--end parent-->
-            <div class="sub">
-        		<a href="#" tittle="Xem tất cả">Xem tất cả</a>
-                <i></i>
-        	</div><!--end sub-->
-            <?php
-            	$csdamat_query="SELECT * FROM submenu where type_sub=N'Uống đẹp da' limit 5";/* <-----------viet them code gioi han 7 san pham */
-				$csdamat_res = mysqli_query($conn,$csdamat_query) or die('Cannot select table!');
-				while ($csdamat_items = mysqli_fetch_array($csdamat_res))
-				{
-			?>
-            	<h2 class="sub">
-            <?php
-				echo"<a href='#'>".$csdamat_items['name_sub']."</a>";
-				echo"</h2>";
-				}
-			?>
-        </div><!--end navicate-->
-        <div class="navicate2">
-        <a href="#" tittle="Sakura HCL" target="_blank">
-        	<img class="banner_rows" src="images/73edab53a905e840888f8f2ea98e82c1.png" alt="Sakura HCL"/>
-    	</a>
-    <div class="selling">
-    	<a href="#" tittle="Sakura CHP" target="_blank">
-        	<img src="images/2a4cc61106984cf28422d1ed838f0c9c.png" alt="Sakura CHP"/>
-    	</a>
-    </div><!--end selling--->
-    	</div>
-
-    </div><!--end sliderows slider_row_t slider_row_hg-->
-    
-    
-</div><!--end content-->
+            </div><!--end phan_page-->
+            
+        </aside><!--end product_l-->
+    </section><!--end content ld-->
 
 
 <!------------------------------------------FOOTER------------------------------------------------------>
@@ -705,9 +438,7 @@ $(document).ready(function() {
                 <div class="backtop">
     				<b></b>
 				</div><!--end backtop-->
-            
             </div><!--end connect--->
-            
             
         </div><!--end container footer-->
     </div><!---end homeEmail-->
@@ -723,11 +454,11 @@ $(document).ready(function() {
             </ul>
         </div><!--end link-->
         <div class="link call"> Tổng đài tư vấn bán hàng (7:30 - 22:00) hằng ngày<br/>
-        	<span class="tongtaituphone">0868896944(Long) - 0944104004(Mr Sơn)</span><!--end tongdaituphone--><br/>
+        	<span class="tongtaituphone">0984 114 827(Long) - 0973 367 087(Mẩn)</span><!--end tongdaituphone--><br/>
             Điện thoại
-            <span class="tongtaituphone">0868896944(Long) - 0944104004(Sơn)</span><!--end tongdaituphone--><br/>
+            <span class="tongtaituphone">0984 114 827(Long) - 0973 367 087(Mẩn)</span><!--end tongdaituphone--><br/>
             Giải quyết khiếu nại từ (9:00 - 17:00) hằng ngày
-            <span class="tongtaituphone">0868896944(Long) - 0944104004(Sơn)</span><!--end tongdaituphone-->
+            <span class="tongtaituphone">0984 114 827(Long) - 0973 367 087(Mẩn)</span><!--end tongdaituphone-->
         </div><!--end link call-->
     </div><!--end container footer-->
     <div class="clear"></div><!--end clear-->
@@ -736,11 +467,8 @@ $(document).ready(function() {
     
     </div><!--end footeradd-->
     <div class="footeraou"></div><!--footeraou-->
-    
 </div><!---end footer-->
 
-
 </div><!--End Wrapper---> 
-	
 </body>
 </html>
